@@ -1,9 +1,6 @@
 import pathlib
 import torch
 
-import torch.nn as nn
-import torch.optim as optim
-
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from src import utils
@@ -12,6 +9,9 @@ from ..utils import get_root_dir
 
 
 if __name__ == "__main__":
+    # Specify the model to be evaluated
+    model_name = "baseline_unet_epoch_20.pth"
+
     # Set Hyperparameters
     IMAGE_SIZE = 256
     NUM_CLASSES = 2
@@ -72,45 +72,24 @@ if __name__ == "__main__":
     )
 
     # Load model
-    model = UNet(num_classes=2).to(device)
+    model = UNet(num_classes=2)
+    model.load_state_dict(torch.load(MODEL_DIR.joinpath(model_name), weights_only=True))
+    model.to(device)
 
-    loss_fn = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(
-        model.parameters(), lr=0.01,
-        momentum=0.9,
-        weight_decay=1e-4,
-        nesterov=True,
-    )
-
-    # Train model
-    model.train()
-    num_train_samples = len(trainloader.dataset)
-
-    for epoch in range(TRAIN_EPOCHS):
-        print(f"Epoch {epoch + 1}/{TRAIN_EPOCHS}")
-        miou = 0
-        for i, (images, segs, _, _) in enumerate(tqdm(trainloader)):
+    # Evaluate model
+    model.eval()
+    num_test_samples = len(testloader.dataset)
+    miou = 0.0
+    with torch.no_grad():
+        for images, segs, _, _ in tqdm(testloader):
             images = images.to(device)
             segs = segs.to(device)
             batch_size = images.size(0)
 
-            # Forward pass
             outputs = model(images)
-            loss = loss_fn(outputs, segs)
+            preds = torch.argmax(outputs, dim=1)
 
-            # Backward pass
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            miou += utils.mean_iou(preds, segs, num_classes=NUM_CLASSES) * batch_size
 
-            pred = torch.argmax(outputs, dim=1)
-            miou += utils.mean_iou(pred, segs, num_classes=NUM_CLASSES) * batch_size
-
-        miou /= num_train_samples
-        print(f"Epoch [{epoch + 1}/{TRAIN_EPOCHS}], Loss: {loss.item():.4f}, mIoU: {miou:.4f}")
-
-        # Save model checkpoint
-        if (epoch + 1) % 5 == 0:
-            save_path = MODEL_DIR.joinpath(f"baseline_unet_epoch_{epoch + 1}.pth")
-            torch.save(model.state_dict(), save_path)
-            print(f"Model saved at {save_path}")
+        miou /= num_test_samples
+        print(f"Model: {model_name},Mean IoU: {miou:.4f}")

@@ -2,7 +2,6 @@ import pathlib
 import torch
 
 import torch.nn as nn
-import torch.optim as optim
 
 from torch.utils.data import DataLoader
 from torchvision.models.segmentation import deeplabv3_resnet50
