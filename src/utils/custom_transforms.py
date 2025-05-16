@@ -33,6 +33,7 @@ class FormatCAM:
             cam = torch.from_numpy(cam)
 
         cam = cam.squeeze(0) if cam.ndim == 3 else cam
+        cam = cam.long()
         return image, seg, cam
 
 class Compose:
