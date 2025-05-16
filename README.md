@@ -1,6 +1,10 @@
 # cv-CAM-based-img-segmentation
 
-## Results: Test mIOU (in %) on Oxford-IIIT Pet Dataset
+This project aims to explore weakly supervised methods for image segmentation.
+In our project, we mainly focus on the `Grad-CAM++` method ([reference](https://arxiv.org/abs/1710.11063)), which only requires image-level labels for training.
+We also experimented with self-training and superpixels SLIC to improve the performance of Grad-CAM++.
+
+## :bar_chart: Results: Test mIOU (in %) on Oxford-IIIT Pet Dataset
 
 | Method             | Backbone Model      | 5 epochs | 10 epochs | 20 epochs |
 |:-------------------|:----------------    |---------:|----------:|----------:|
@@ -9,6 +13,10 @@
 | Grad-CAM++         | U-Net               | 67.29    | 68.38     | 71.04     |
 | Fully-Supervised   | DeepLabV3 ResNet-50 | 91.78    | 92.29     | -         |
 | Fully-Supervised   | U-Net               | 79.20    | 82.90     | 86.56     |
+
+### Example of Grad-CAM++ and SLIC Superpixels
+
+![gradcam_slic_demo_img](docs/assets/gradcam_slic_demo.png)
 
 ## Experiments
 

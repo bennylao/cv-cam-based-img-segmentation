@@ -3,3 +3,5 @@ torchvision==0.20.0
 tqdm
 scikit-image
 matplotlib
+Pillow
+numpy
