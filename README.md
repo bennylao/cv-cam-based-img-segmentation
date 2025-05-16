@@ -2,21 +2,21 @@
 
 ## 📖 Overview
 
-This project explores weakly supervised learning techniques for image segmentation, focusing primarily on the Grad-CAM++ method ([paper](https://arxiv.org/abs/1710.11063)).
+This project explores **weakly supervised** learning techniques for image segmentation, focusing primarily on the Grad-CAM++ method ([paper](https://arxiv.org/abs/1710.11063)).
 
 GradCAM++ requires only image-level labels for training, eliminating the need for pixel-level annotations. The project aims to evaluate the performance of Grad-CAM++ on the Oxford Pets dataset, comparing it with fully supervised methods.
 
-In additional, we experimented with self-training and superpixels SLIC to improve the performance of Grad-CAM++.
+In additional, we experimented with **self-training** and **superpixels SLIC** to improve the performance of Grad-CAM++.
 
 ## 📊 Results: Test mIOU (in %) on Oxford-IIIT Pet Dataset
 
-| Method             | Backbone Model      | 5 epochs | 10 epochs | 20 epochs |
-|:-------------------|:----------------    |---------:|----------:|----------:|
-| SLIC + Grad-CAM++  | DeepLabV3 ResNet-50 | 76.21    | 77.61     | -         |
-| Grad-CAM++         | DeepLabV3 ResNet-50 | 73.81    | 74.35     | -         |
-| Grad-CAM++         | U-Net               | 67.29    | 68.38     | 71.04     |
-| Fully-Supervised   | DeepLabV3 ResNet-50 | 91.78    | 92.29     | -         |
-| Fully-Supervised   | U-Net               | 79.20    | 82.90     | 86.56     |
+| Method             | Backbone Model      | 5 epochs  | 10 epochs | 20 epochs |
+|:-------------------|:--------------------|----------:|----------:|----------:|
+| SLIC + Grad-CAM++  | DeepLabV3 ResNet-50 | **76.21** | **77.61** | -         |
+| Grad-CAM++         | DeepLabV3 ResNet-50 | 73.81     | 74.35     | -         |
+| Grad-CAM++         | U-Net               | 67.29     | 68.38     | 71.04     |
+| Fully-Supervised   | DeepLabV3 ResNet-50 | 91.78     | 92.29     | -         |
+| Fully-Supervised   | U-Net               | 79.20     | 82.90     | 86.56     |
 
 ## 🖼️ Visualisation -- Grad-CAM++ + SLIC Superpixels
 
