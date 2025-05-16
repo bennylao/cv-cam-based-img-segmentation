@@ -120,4 +120,3 @@ if __name__ == "__main__":
             save_path = MODEL_DIR.joinpath(f"cam_deeplab_epoch_{epoch + 1}.pth")
             torch.save(model.state_dict(), save_path)
             print(f"Model saved at {save_path}")
-
