@@ -7,7 +7,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from src import utils
-from src.models.baseline_unet import UNet
+from src.models.unet import UNet
 from ..utils import get_root_dir
 
 
