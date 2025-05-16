@@ -8,8 +8,9 @@ import xml.etree.ElementTree as ET
 from typing import Tuple
 from torch.utils.data import Dataset
 from torchvision import datasets
-from torchvision import transforms
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
+from skimage.segmentation import slic
+from skimage.morphology import opening, closing, disk
 
 
 def split_dataset(
@@ -319,3 +320,72 @@ class BBoxDataset(OxfordPetsDataset):
 		pil_image = Image.fromarray(mask)
 		
 		return pil_image
+
+
+def refine_mask_with_superpixel(
+    image_tensor,
+    prob_map,
+    n_segments: int = 200,
+    compactness: float = 0.001,
+    sigma: float = 1.0,
+    selem_radius: int = None
+):
+    """
+    Refine a per-pixel probability map by superpixel soft-voting, with smoothing.
+
+    Parameters
+    ----------
+    image_tensor : torch.Tensor
+        Input image in CHW format ([3, H, W]).
+    prob_map : np.ndarray
+        Softmax output of shape (H, W, C) giving per-pixel class probabilities.
+    n_segments : int
+        Number of superpixels for SLIC.
+    compactness : float
+        Compactness parameter for SLIC.
+    sigma : float
+        Gaussian smoothing parameter for SLIC.
+    selem_radius : int or None
+        Radius for morphological opening+closing. If None, no smoothing is done.
+
+    Returns
+    -------
+    smoothed : np.ndarray or None
+        If `selem_radius` is given, the result after opening+closing, else None.
+    refined : np.ndarray
+        Hard labels after superpixel soft-voting, shape (H, W), dtype int.
+    superpixels : np.ndarray
+        The SLIC label map, shape (H, W), dtype int.
+    """
+    # Convert image tensor to HWC numpy
+    img = image_tensor.permute(1, 2, 0).cpu().numpy()
+    prob = prob_map.permute(1, 2, 0).cpu().numpy()  # Convert to HWC
+
+    # 1) Compute superpixels
+    superpixels = slic(
+        img,
+        n_segments=n_segments,
+        compactness=compactness,
+        sigma=sigma,
+        start_label=0
+    )
+    # print(f"SLIC produced {superpixels.max()+1} superpixels; shape = {superpixels.shape}")
+
+    # 2) Soft‐voting within each superpixel
+    H, W, C = prob.shape
+    refined = np.zeros((H, W), dtype=np.int32)
+    for sp_val in np.unique(superpixels):
+        mask = (superpixels == sp_val)
+        sp_probs = prob[mask]           # shape: (n_pixels_in_sp, C)
+        summed = sp_probs.sum(axis=0)       # shape: (C,)
+        refined[mask] = np.argmax(summed)
+
+    # 3) Optional morphological smoothing
+    smoothed = None
+    if selem_radius is not None:
+        selem = disk(selem_radius)
+        # Opening then closing to remove small islands & fill gaps
+        smooth0 = opening(refined.astype(np.uint8), selem)
+        smoothed = closing(smooth0, selem)
+
+    return smoothed, refined, superpixels
