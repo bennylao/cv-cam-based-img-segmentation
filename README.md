@@ -1,10 +1,14 @@
 # cv-CAM-based-img-segmentation
 
-This project aims to explore weakly supervised methods for image segmentation.
-In our project, we mainly focus on the `Grad-CAM++` method ([reference](https://arxiv.org/abs/1710.11063)), which only requires image-level labels for training.
-We also experimented with self-training and superpixels SLIC to improve the performance of Grad-CAM++.
+## 📖 Overview
 
-## :bar_chart: Results: Test mIOU (in %) on Oxford-IIIT Pet Dataset
+This project explores weakly supervised learning techniques for image segmentation, focusing primarily on the Grad-CAM++ method ([paper](https://arxiv.org/abs/1710.11063)).
+
+GradCAM++ requires only image-level labels for training, eliminating the need for pixel-level annotations. The project aims to evaluate the performance of Grad-CAM++ on the Oxford Pets dataset, comparing it with fully supervised methods.
+
+In additional, we experimented with self-training and superpixels SLIC to improve the performance of Grad-CAM++.
+
+## 📊 Results: Test mIOU (in %) on Oxford-IIIT Pet Dataset
 
 | Method             | Backbone Model      | 5 epochs | 10 epochs | 20 epochs |
 |:-------------------|:----------------    |---------:|----------:|----------:|
@@ -14,11 +18,11 @@ We also experimented with self-training and superpixels SLIC to improve the perf
 | Fully-Supervised   | DeepLabV3 ResNet-50 | 91.78    | 92.29     | -         |
 | Fully-Supervised   | U-Net               | 79.20    | 82.90     | 86.56     |
 
-### Example of Grad-CAM++ and SLIC Superpixels
+## 🖼️ Visualisation -- Grad-CAM++ + SLIC Superpixels
 
 ![gradcam_slic_demo_img](docs/assets/gradcam_slic_demo.png)
 
-## Experiments
+## 🧪 Experiments
 
 ### Dataset
 
@@ -30,7 +34,7 @@ Dataset used in this project is Oxford Pets dataset. The dataset can be download
 Models weights and the generated CAM Masks to reproduce the experiments can be downloaded from the following link:
 [Model Weights and CAM Data](https://www.icloud.com/iclouddrive/05f4KsOqKw_NywJZlf6qifJ5g#GradCAM-Weakly-Supervision)
 
-## Noteboooks and Scripts
+## 🚀 Noteboooks and Scripts
 
 Experiments and results are stored in the `notebooks` directory. Separate scripts are also provided for training and evaluation.
 
