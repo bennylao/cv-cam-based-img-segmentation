@@ -1,4 +1,4 @@
-# cv-CAM-based-img-segmentation
+# Computer Vision - CAM based Image Segmentation
 
 ## 📖 Overview
 
